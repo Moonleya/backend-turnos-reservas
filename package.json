@@ -1,0 +1,22 @@
+{
+ "name": "backend-turnos-reservas",
+ "version": "1.0.0",
+ "description": "Sistema para cotizar servicios de desarrollo de software y gestionar reservas de consultoría",
+ "type": "module",
+ "main": "app.js",
+ "scripts": {
+  "start": "node app.js",
+  "dev": "nodemon app.js"
+ },
+ "keywords": [
+  "node",
+  "backend",
+  "reservas",
+  "turnos"
+ ],
+ "author": "",
+ "license": "ISC",
+ "dependencies": {
+  "dotenv": "^18.0.5"
+ }
+}

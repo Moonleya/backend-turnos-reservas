@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Desarrollo Web",
+    "description": "Desarrollo de aplicaciones y soluciones web personalizadas",
+    "duration": 40,
+    "price": 2500000,
+    "category": "Desarrollo",
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Desarrollo de Aplicación Móvil",
+    "description": "Desarrollo de aplicaciones móviles para Android y iOS",
+    "duration": 60,
+    "price": 4000000,
+    "category": "Desarrollo",
+    "available": true
+  },
+  {
+    "id": 3,
+    "name": "Integración de API",
+    "description": "Integración de servicios externos mediante APIs",
+    "duration": 24,
+    "price": 1500000,
+    "category": "Integración",
+    "available": true
+  },
+  {
+    "id": 4,
+    "name": "Consultoría de Software",
+    "description": "Sesión de consultoría para analizar necesidades y definir soluciones de software",
+    "duration": 2,
+    "price": 300000,
+    "category": "Consultoría",
+    "available": true
+  }
+]
