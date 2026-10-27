@@ -36,7 +36,7 @@ Instalación
 
 Para instalar el proyecto se debe clonar el repositorio y acceder a la carpeta del proyecto:
 
-git clone URL_DEL_REPOSITORIO
+git  https://github.com/Moonleya/backend-turnos-reservas.git
 cd backend-turnos-reservas
 
 Luego instalar las dependencias:
@@ -197,6 +197,6 @@ Los cambios realizados mediante addService, updateService y deleteService se man
 
 El archivo services.json funciona como fuente inicial de datos. En futuras etapas del proyecto podrá ser reemplazado o complementado con una base de datos.
 
-Autor
+Autor :Leidy Johanna Achury 
 
 Proyecto desarrollado como parte del curso de Backend.
