@@ -1,12 +1,14 @@
-import { ServiceManager } from "./src/managers/ServiceManager.js";
+import express from "express";
+import { env } from "./src/config/env.config.js";
+import servicesRouter from "./src/routes/services.router.js";
 
-const serviceManager = new ServiceManager();
+const app = express();
 
-console.log("Servicio antes de eliminar:");
-console.log(serviceManager.getServiceById(2));
+app.use(express.json());
 
-console.log("Servicio eliminado:");
-console.log(serviceManager.deleteService(2));
+app.use("/api/services", servicesRouter);
 
-console.log("Servicio después de eliminar:");
-console.log(serviceManager.getServiceById(2));
+app.listen(env.port, () => {
+console.log(`Servidor ejecutándose en http://localhost:${env.port}`);
+});
+
