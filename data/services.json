@@ -28,10 +28,10 @@
   },
   {
     "id": 4,
-    "name": "Consultoría de Software",
-    "description": "Sesión de consultoría para analizar necesidades y definir soluciones de software",
-    "duration": 2,
-    "price": 300000,
+    "name": "Consultoría Backend Avanzada",
+    "description": "Consultoría especializada en arquitectura y desarrollo backend",
+    "duration": 5,
+    "price": 500000,
     "category": "Consultoría",
     "available": true
   }

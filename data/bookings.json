@@ -1,0 +1,25 @@
+[
+  {
+    "id": "804d0185-2690-409d-b143-b4fc1786bb14",
+    "clientName": "Carlos Rodríguez",
+    "clientEmail": "carlos@email.com",
+    "date": "2026-11-15",
+    "time": "10:00",
+    "status": "pending",
+    "services": [
+      {
+        "service": 4,
+        "quantity": 3
+      }
+    ]
+  },
+  {
+    "id": "546d8432-8691-46a5-81f3-4321c9ef831f",
+    "clientName": "Prueba de persistencia",
+    "clientEmail": "persistencia@gmail.com",
+    "date": "2026-11-15",
+    "time": "11:00",
+    "status": "pending",
+    "services": []
+  }
+]
