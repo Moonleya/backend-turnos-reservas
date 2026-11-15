@@ -6,8 +6,7 @@ import { randomUUID } from "node:crypto";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const BOOKINGS_PATH = path.join(__dirname, "../../data/bookings.json");
-const SERVICES_PATH = path.join(__dirname, "../../data/services.json");
+const BOOKINGS_PATH = path.join(__dirname, "../data/bookings.json");
 
 export class BookingManager {
 
@@ -35,6 +34,7 @@ export class BookingManager {
 
     // Crear una nueva reserva
     async createBooking(bookingData) {
+
         const requiredFields = [
             "clientName",
             "clientEmail",
@@ -100,6 +100,7 @@ export class BookingManager {
 
     // Agregar un servicio a una reserva
     async addServiceToBooking(bookingId, serviceId) {
+
         const bookings = await this.getBookings();
 
         const booking = bookings.find(
@@ -110,21 +111,6 @@ export class BookingManager {
             throw new Error("La reserva no existe");
         }
 
-        const servicesData = await fs.readFile(
-            SERVICES_PATH,
-            "utf-8"
-        );
-
-        const services = JSON.parse(servicesData);
-
-        const service = services.find(
-            service => String(service.id) === String(serviceId)
-        );
-
-        if (!service) {
-            throw new Error("El servicio no existe");
-        }
-
         const existingService = booking.services.find(
             item => String(item.service) === String(serviceId)
         );
@@ -133,7 +119,7 @@ export class BookingManager {
             existingService.quantity += 1;
         } else {
             booking.services.push({
-                service: service.id,
+                service: Number(serviceId),
                 quantity: 1
             });
         }
@@ -145,6 +131,7 @@ export class BookingManager {
 
     // Eliminar un servicio de una reserva
     async removeServiceFromBooking(bookingId, serviceId) {
+
         const bookings = await this.getBookings();
 
         const booking = bookings.find(
@@ -172,6 +159,7 @@ export class BookingManager {
 
     // Actualizar los datos de una reserva
     async updateBooking(id, bookingData) {
+
         const bookings = await this.getBookings();
 
         const booking = bookings.find(
@@ -217,6 +205,7 @@ export class BookingManager {
 
     // Actualizar el estado de una reserva
     async updateBookingStatus(id, status) {
+
         const bookings = await this.getBookings();
 
         const booking = bookings.find(
@@ -246,6 +235,7 @@ export class BookingManager {
 
     // Eliminar una reserva completa
     async deleteBooking(id) {
+
         const bookings = await this.getBookings();
 
         const bookingIndex = bookings.findIndex(

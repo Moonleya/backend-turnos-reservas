@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const FILE_PATH = path.join(__dirname, "../../data/services.json");
+const FILE_PATH = path.join(__dirname, "../data/services.json");
 
 export class ServiceManager {
 

@@ -21,5 +21,19 @@
     "time": "11:00",
     "status": "pending",
     "services": []
+  },
+  {
+    "id": "0546eb44-1686-49a2-9b23-2b2c46fc5815",
+    "clientName": "Juan Carlos Pérez",
+    "clientEmail": "juan.perez@gmail.com",
+    "date": "2026-11-20",
+    "time": "09:00",
+    "status": "pending",
+    "services": [
+      {
+        "service": 1,
+        "quantity": 2
+      }
+    ]
   }
 ]
