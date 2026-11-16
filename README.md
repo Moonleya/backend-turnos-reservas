@@ -4,11 +4,11 @@
 
 Backend desarrollado con Node.js y Express para la gestión de servicios de desarrollo de software, cotizaciones y reservas de consultorías.
 
-El sistema permite administrar un catálogo de servicios, registrar clientes, crear reservas de consultoría, consultar las reservas existentes y asociar diferentes servicios a cada reserva.
+El sistema permite administrar un catálogo de servicios, registrar clientes, crear reservas de consultoría, consultar reservas existentes y asociar diferentes servicios a cada reserva.
 
 El proyecto utiliza archivos JSON como mecanismo inicial de almacenamiento de información, permitiendo gestionar los datos mediante operaciones CRUD y persistencia local.
 
-Esta entrega implementa una API REST con una arquitectura organizada en Routes, Controllers y Managers, separando las responsabilidades de enrutamiento, atención de solicitudes HTTP y lógica de negocio.
+Esta entrega implementa una API REST con arquitectura en capas, incorporando los patrones DAO (Data Access Object) y Repository para separar las responsabilidades de acceso a datos, lógica de negocio y atención de solicitudes HTTP.
 
 ## 2. Tecnologías utilizadas
 
@@ -25,7 +25,7 @@ Esta entrega implementa una API REST con una arquitectura organizada en Routes, 
 
 El proyecto está organizado de la siguiente manera:
 
-```text
+
 backend-turnos-reservas/
 │
 ├── src/
@@ -36,9 +36,17 @@ backend-turnos-reservas/
 │   │   ├── services.controller.js
 │   │   └── bookings.controller.js
 │   │
-│   ├── managers/
-│   │   ├── ServiceManager.js
-│   │   └── BookingManager.js
+│   ├── services/
+│   │   ├── services.service.js
+│   │   └── bookings.service.js
+│   │
+│   ├── repositories/
+│   │   ├── services.repository.js
+│   │   └── bookings.repository.js
+│   │
+│   ├── dao/
+│   │   ├── services.dao.js
+│   │   └── bookings.dao.js
 │   │
 │   ├── routes/
 │   │   ├── services.router.js
@@ -57,39 +65,53 @@ backend-turnos-reservas/
 ├── package.json
 ├── package-lock.json
 └── README.md
-```
 
-### Arquitectura
 
-La aplicación utiliza una separación por responsabilidades:
+### 3.1 Arquitectura en capas
+
+La aplicación implementa el siguiente flujo de ejecución:
+
+**Router → Controller → Service → Repository → DAO → Archivo JSON**
+
+Cada capa tiene una responsabilidad específica:
 
 - **Routes:** definen los endpoints y conectan las solicitudes con sus respectivos Controllers.
-- **Controllers:** reciben las solicitudes HTTP, extraen parámetros y datos del cuerpo de la petición, invocan los Managers y generan las respuestas.
-- **Managers:** contienen la lógica de negocio y administran la lectura y escritura de los archivos JSON.
+- **Controllers:** reciben las solicitudes HTTP, extraen parámetros y datos del cuerpo de la petición, invocan los Services y generan las respuestas.
+- **Services:** contienen la lógica de negocio, validaciones y reglas de funcionamiento de la aplicación.
+- **Repositories:** actúan como intermediarios entre los Services y los DAO, centralizando las operaciones de acceso a datos.
+- **DAO:** gestionan directamente la lectura, escritura, consulta, actualización y eliminación de información en los archivos JSON.
 - **Config:** centraliza la configuración de las variables de entorno.
 - **Data:** almacena la información persistente de servicios y reservas.
 - **App:** configura Express y registra los Routers.
 - **Server:** inicia el servidor utilizando la configuración del entorno.
 
+### 3.2 Patrón DAO y Repository
+
+El patrón DAO permite encapsular el acceso directo a los archivos JSON, evitando que las demás capas tengan que conocer los detalles de almacenamiento.
+
+El patrón Repository proporciona una interfaz de acceso a los datos para los Services, manteniendo desacoplada la lógica de negocio del mecanismo de persistencia.
+
+Esta separación facilita el mantenimiento, las pruebas y una futura migración hacia una base de datos.
+
 ## 4. Instalación
 
 Clonar el repositorio:
 
-```bash
+
 git clone https://github.com/Moonleya/backend-turnos-reservas.git
-```
+
 
 Ingresar a la carpeta del proyecto:
 
-```bash
+
 cd backend-turnos-reservas
-```
+
 
 Instalar las dependencias:
 
-```bash
+
 npm install
-```
+
 
 ## 5. Variables de entorno
 
@@ -102,17 +124,17 @@ El proyecto utiliza variables de entorno para configurar la aplicación.
 
 Crear un archivo `.env` en la raíz del proyecto:
 
-```env
+env
 PORT=8080
 NODE_ENV=development
-```
+
 
 El archivo `.env.example` contiene la estructura de referencia para configurar el proyecto:
 
-```env
+env
 PORT=8080
 NODE_ENV=development
-```
+
 
 **Importante:** el archivo `.env` contiene configuración local y no debe publicarse en el repositorio. El archivo `.env.example` sí debe incluirse para facilitar la configuración de nuevos entornos.
 
@@ -120,27 +142,25 @@ NODE_ENV=development
 
 Para iniciar el servidor en modo desarrollo:
 
-```bash
+bash
 npm run dev
-```
+
 
 Para iniciar el servidor en modo normal:
 
-```bash
+bash
 npm start
-```
+
 
 La API estará disponible localmente en:
 
-```text
+
 http://localhost:8080
-```
+
 
 Al iniciar correctamente, se mostrará el mensaje:
-
-```text
 Servidor ejecutándose en http://localhost:8080
-```
+
 
 ## 7. Módulo de servicios
 
@@ -148,19 +168,19 @@ El recurso `services` representa los servicios de desarrollo de software disponi
 
 Cada servicio contiene la siguiente estructura:
 
-```json
-{
-  "id": 1,
-  "name": "Desarrollo Backend",
-  "description": "Desarrollo de APIs y servicios backend",
-  "duration": 30,
-  "price": 1800000,
-  "category": "Desarrollo",
-  "available": true
-}
-```
 
-### Campos del servicio
+{
+    "id": 1,
+    "name": "Desarrollo Backend",
+    "description": "Desarrollo de APIs y servicios backend",
+    "duration": 30,
+    "price": 1800000,
+    "category": "Desarrollo",
+    "available": true
+}
+
+
+### 7.1 Campos del servicio
 
 | Campo | Descripción |
 |---|---|
@@ -172,11 +192,9 @@ Cada servicio contiene la siguiente estructura:
 | category | Categoría del servicio |
 | available | Disponibilidad del servicio |
 
-### 7.1 Endpoints de servicios
+### 7.2 Endpoints de servicios
 
-Todos los endpoints utilizan la ruta base:
-
-`/api/services`
+Ruta base: `/api/services`
 
 | Método HTTP | Endpoint | Descripción |
 |---|---|---|
@@ -186,59 +204,72 @@ Todos los endpoints utilizan la ruta base:
 | PUT | `/api/services/:sid` | Actualizar un servicio |
 | DELETE | `/api/services/:sid` | Eliminar un servicio |
 
-### 7.2 Ejemplo de creación de un servicio
+### 7.3 Ejemplo de creación de un servicio
 
 **Método:** POST
 
 **Endpoint:**
 
-```text
+
 http://localhost:8080/api/services
-```
+
 
 **Body (JSON):**
 
-```json
+
 {
-  "name": "Desarrollo Backend",
-  "description": "Desarrollo de APIs y servicios backend con Node.js",
-  "duration": 30,
-  "price": 1800000,
-  "category": "Desarrollo",
-  "available": true
+    "name": "Desarrollo Backend",
+    "description": "Desarrollo de APIs y servicios backend con Node.js",
+    "duration": 30,
+    "price": 1800000,
+    "category": "Desarrollo",
+    "available": true
 }
-```
+
 
 El identificador del servicio se genera automáticamente.
 
 Respuesta esperada: `201 Created`.
 
+### 7.4 Validaciones de servicios
+
+Al crear un servicio, el sistema verifica que los siguientes campos sean obligatorios:
+
+- name
+- description
+- duration
+- price
+- category
+- available
+
+Si falta alguno de estos campos, la API devuelve una respuesta `400 Bad Request`.
+
 ## 8. Módulo de reservas (Bookings)
 
-El recurso `bookings` permite registrar y administrar las reservas de consultoría realizadas por los clientes.
+El recurso `bookings` permite registrar reservas de consultoría realizadas por los clientes.
 
 Cada reserva contiene información del cliente, fecha, hora, estado y los servicios asociados.
 
 ### 8.1 Estructura de una reserva
 
-```json
-{
-  "id": "804d0185-2690-409d-b143-b4fc1786bb14",
-  "clientName": "Carlos Rodriguez",
-  "clientEmail": "carlos@email.com",
-  "date": "2026-11-15",
-  "time": "10:00",
-  "status": "pending",
-  "services": [
-    {
-      "service": 4,
-      "quantity": 3
-    }
-  ]
-}
-```
 
-### Campos de la reserva
+{
+    "id": "804d0185-2690-409d-b143-b4fc1786bb14",
+    "clientName": "Carlos Rodriguez",
+    "clientEmail": "carlos@email.com",
+    "date": "2026-12-10",
+    "time": "10:00",
+    "status": "pending",
+    "services": [
+        {
+            "service": 1,
+            "quantity": 2
+        }
+    ]
+}
+
+
+### 8.2 Campos de la reserva
 
 | Campo | Descripción |
 |---|---|
@@ -252,7 +283,7 @@ Cada reserva contiene información del cliente, fecha, hora, estado y los servic
 | service | Identificador del servicio asociado |
 | quantity | Cantidad de unidades del servicio |
 
-### 8.2 Validaciones
+### 8.3 Validaciones de reservas
 
 Al crear una reserva, el sistema verifica:
 
@@ -261,19 +292,19 @@ Al crear una reserva, el sistema verifica:
 - Que el formato del correo electrónico sea válido.
 - Que la fecha sea proporcionada.
 - Que la hora sea proporcionada.
+- Que el estado corresponda a uno de los valores permitidos: `pending`, `confirmed` o `cancelled`.
 
-El estado inicial de una reserva es `pending`, cuando no se especifica otro estado.
+Cuando no se especifica un estado, el sistema asigna automáticamente `pending`.
+
+El identificador de la reserva se genera mediante UUID.
 
 ## 9. Endpoints de reservas
 
-Todos los endpoints utilizan la ruta base:
-
-`/api/bookings`
+Ruta base: `/api/bookings`
 
 | Método HTTP | Endpoint | Descripción |
 |---|---|---|
 | POST | `/api/bookings` | Crear una reserva |
-| GET | `/api/bookings` | Consultar todas las reservas |
 | GET | `/api/bookings/:bid` | Consultar una reserva por ID |
 | POST | `/api/bookings/:bid/services/:sid` | Agregar un servicio a una reserva |
 
@@ -283,74 +314,57 @@ Todos los endpoints utilizan la ruta base:
 
 **Endpoint:**
 
-```text
+
 http://localhost:8080/api/bookings
-```
+
 
 **Body (JSON):**
 
-```json
 {
-  "clientName": "Carlos Rodriguez",
-  "clientEmail": "carlos@email.com",
-  "date": "2026-11-20",
-  "time": "10:00"
+    "clientName": "Carlos Rodriguez",
+    "clientEmail": "carlos@email.com",
+    "date": "2026-12-10",
+    "time": "10:00",
+    "status": "pending"
 }
-```
+
 
 Respuesta esperada: `201 Created`.
 
-El sistema genera automáticamente un identificador UUID y asigna el estado inicial `pending`.
+El sistema genera automáticamente un identificador UUID y asigna el estado inicial `pending` cuando no se proporciona otro estado.
 
-### 9.2 Consultar todas las reservas
-
-**Método:** GET
-
-**Endpoint:**
-
-```text
-http://localhost:8080/api/bookings
-```
-
-Permite obtener el listado completo de las reservas registradas en el sistema.
-
-Respuesta esperada: `200 OK`.
-
-La respuesta contiene un arreglo JSON con las reservas almacenadas, incluyendo los servicios asociados a cada una.
-
-### 9.3 Consultar una reserva por identificador
+### 9.2 Consultar una reserva por identificador
 
 **Método:** GET
 
 **Endpoint:**
 
-```text
+
 http://localhost:8080/api/bookings/804d0185-2690-409d-b143-b4fc1786bb14
-```
+
 
 Permite consultar la información detallada de una reserva mediante su identificador UUID, incluyendo los servicios asociados y sus respectivas cantidades.
 
 Respuestas esperadas:
-
 - `200 OK`: reserva encontrada.
 - `404 Not Found`: reserva no encontrada.
 
-### 9.4 Agregar un servicio a una reserva
+### 9.3 Agregar un servicio a una reserva
 
 **Método:** POST
 
 **Endpoint:**
 
-```text
-http://localhost:8080/api/bookings/804d0185-2690-409d-b143-b4fc1786bb14/services/4
-```
+
+http://localhost:8080/api/bookings/804d0185-2690-409d-b143-b4fc1786bb14/services/1
+
 
 Los identificadores de la reserva y del servicio se envían mediante los parámetros de la URL.
 
 Esta operación permite:
 
 - Verificar que la reserva exista.
-- Verificar que el servicio exista mediante `ServiceManager`.
+- Verificar que el servicio exista.
 - Asociar el servicio a la reserva.
 - Incrementar la cantidad cuando el servicio ya se encuentra asociado.
 
@@ -360,68 +374,96 @@ Cuando se agrega un servicio por primera vez a una reserva, el sistema lo regist
 
 Cuando se vuelve a agregar el mismo servicio a la misma reserva, la cantidad se incrementa automáticamente en una unidad por cada solicitud exitosa.
 
-Ejemplo:
-
 Primera solicitud:
 
-```json
+
 {
-  "service": 1,
-  "quantity": 1
+    "service": 1,
+    "quantity": 1
 }
-```
+
 
 Segunda solicitud del mismo servicio:
 
-```json
+
 {
-  "service": 1,
-  "quantity": 2
+    "service": 1,
+    "quantity": 2
 }
-```
+
 
 Tercera solicitud del mismo servicio:
 
-```json
+
 {
-  "service": 1,
-  "quantity": 3
+    "service": 1,
+    "quantity": 3
 }
-```
+
 
 No es necesario enviar un Body en esta petición, ya que el identificador del servicio se obtiene desde la URL y la cantidad se administra automáticamente.
 
+La validación de existencia de la reserva, existencia del servicio y el incremento de `quantity` se implementan en la capa `BookingsService`.
+
 Respuesta esperada: `200 OK`.
 
-## 10. Administradores del sistema (Managers)
+## 10. Arquitectura y responsabilidades de las capas
 
-El proyecto utiliza clases independientes para separar la lógica de negocio de las rutas HTTP.
+### Services
 
-### ServiceManager
+Contienen las reglas de negocio de cada módulo.
 
-Encargado de administrar los servicios disponibles:
+**ServicesService:**
 
 - Consultar todos los servicios.
-- Buscar servicios por identificador.
+- Consultar un servicio por identificador.
 - Crear servicios.
 - Actualizar servicios.
 - Eliminar servicios.
-- Guardar los cambios en el archivo JSON.
+- Validar los campos obligatorios al crear un servicio.
 
-### BookingManager
+**BookingsService:**
 
-Encargado de administrar las reservas:
-
-- Consultar todas las reservas.
-- Guardar reservas.
 - Crear reservas.
-- Buscar reservas por identificador.
-- Validar información del cliente.
+- Validar los datos del cliente.
+- Validar el correo electrónico.
+- Asignar el estado inicial de la reserva.
+- Consultar reservas por identificador.
+- Verificar la existencia de servicios antes de asociarlos.
 - Asociar servicios a las reservas.
-- Incrementar cantidades de servicios asociados.
-- Actualizar la información de las reservas.
+- Incrementar las cantidades de servicios asociados.
 
-Los Managers no gestionan directamente las solicitudes HTTP. Esta responsabilidad corresponde a los Controllers.
+### Repositories
+
+Actúan como intermediarios entre Services y DAO.
+
+**ServicesRepository:**
+
+Gestiona las operaciones de consulta, creación, actualización y eliminación de servicios mediante `ServicesDAO`.
+
+**BookingsRepository:**
+
+Gestiona las operaciones de creación, consulta y actualización de reservas mediante `BookingsDAO`.
+
+### DAO
+
+Encapsulan las operaciones de persistencia en los archivos JSON.
+
+**ServicesDAO:**
+
+- Consultar todos los servicios.
+- Consultar un servicio por identificador.
+- Crear servicios.
+- Actualizar servicios.
+- Eliminar servicios.
+
+**BookingsDAO:**
+
+- Crear reservas.
+- Consultar reservas por identificador.
+- Actualizar reservas.
+
+Los DAO se encargan exclusivamente del acceso y persistencia de los datos, sin implementar reglas de negocio.
 
 ## 11. Almacenamiento de información
 
@@ -434,9 +476,7 @@ El proyecto utiliza archivos JSON para almacenar la información:
 
 La gestión de archivos se realiza mediante el módulo `node:fs/promises`, utilizando operaciones asíncronas de lectura y escritura.
 
-Los datos de las reservas se almacenan de manera persistente en `bookings.json`.
-
-El archivo `services.json` funciona como fuente de información para consultar y administrar los servicios disponibles.
+Los datos se almacenan de manera persistente en los respectivos archivos JSON.
 
 Este mecanismo de almacenamiento corresponde a una etapa inicial del desarrollo. En futuras versiones podrá implementarse una base de datos para mejorar la escalabilidad y administración de la información.
 
@@ -444,39 +484,40 @@ Este mecanismo de almacenamiento corresponde a una etapa inicial del desarrollo.
 
 Las pruebas de los endpoints se realizan utilizando Postman.
 
-Se validaron las siguientes operaciones:
+Se realizaron pruebas funcionales para verificar las operaciones de servicios y reservas, así como las validaciones y la persistencia de información.
 
 | Módulo | Operación | Resultado |
 |---|---|---|
 | Servicios | Consultar todos los servicios (GET) | 200 OK |
 | Servicios | Consultar servicio por ID (GET) | 200 OK |
 | Servicios | Crear servicio (POST) | 201 Created |
+| Servicios | Validar campos obligatorios | 400 Bad Request |
 | Servicios | Actualizar servicio (PUT) | 200 OK |
 | Servicios | Eliminar servicio (DELETE) | 200 OK |
+| Servicios | Consultar servicio eliminado | 404 Not Found |
 | Reservas | Crear reserva (POST) | 201 Created |
-| Reservas | Consultar todas las reservas (GET) | 200 OK |
 | Reservas | Consultar reserva por ID (GET) | 200 OK |
 | Reservas | Agregar servicio a reserva (POST) | 200 OK |
 | Reservas | Verificar incremento de quantity | Correcto |
-| Reservas | Verificar persistencia de información | Correcto |
+| Reservas | Agregar servicio inexistente | 404 Not Found |
+| Reservas | Agregar servicio a reserva inexistente | 404 Not Found |
 
-Las pruebas permitieron verificar el flujo completo de gestión de reservas:
+Adicionalmente, después de retirar los antiguos Managers, se reinició el servidor y se verificó nuevamente:
 
-1. Crear un servicio.
-2. Crear una reserva.
-3. Agregar un servicio existente a la reserva.
-4. Agregar nuevamente el mismo servicio y verificar el incremento de la cantidad.
-5. Consultar todas las reservas.
-6. Consultar una reserva específica por su identificador.
+- La consulta de todos los servicios.
+- La consulta de una reserva por UUID.
+- La persistencia del servicio asociado con `quantity: 2`.
 
-Las pruebas permitieron comprobar la comunicación entre Routes, Controllers y Managers, así como la persistencia de la información en los archivos JSON.
+Estas pruebas permitieron comprobar que la nueva arquitectura funciona sin depender de las clases Manager anteriores.
 
 ## 13. Consideraciones técnicas
 
 - La aplicación utiliza módulos ECMAScript (ESM).
 - Las rutas están separadas por recursos.
 - Los Controllers gestionan las solicitudes y respuestas HTTP.
-- La lógica de negocio se encuentra encapsulada en las clases Manager.
+- La lógica de negocio se encuentra encapsulada en la capa Services.
+- Los Repositories desacoplan los Services del acceso directo a datos.
+- Los DAO administran la persistencia en archivos JSON.
 - Se utiliza UUID para identificar las reservas.
 - Las operaciones de lectura y escritura de archivos son asíncronas.
 - Se implementan validaciones para los datos de entrada.

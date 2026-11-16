@@ -1,16 +1,12 @@
 import { Router } from "express";
 
 import {
-    getBookings,
     createBooking,
     getBookingById,
     addServiceToBooking
 } from "../controllers/bookings.controller.js";
 
 const router = Router();
-
-// Consultar todas las reservas
-router.get("/", getBookings);
 
 // Crear una reserva
 router.post("/", createBooking);
